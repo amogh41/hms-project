@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Hospital Management System</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            background:#f4f4f4;
+            padding:40px;
+        }
+
+        h1{
+            color:#333;
+        }
+
+        form{
+            background:white;
+            padding:20px;
+            margin-bottom:30px;
+        }
+
+        input{
+            padding:10px;
+            margin:10px;
+            width:200px;
+        }
+
+        button{
+            padding:10px 20px;
+            background:#007bff;
+            color:white;
+            border:none;
+        }
+
+        table{
+            width:100%;
+            border-collapse: collapse;
+            background:white;
+        }
+
+        th, td{
+            border:1px solid #ccc;
+            padding:12px;
+            text-align:center;
+        }
+
+        th{
+            background:#007bff;
+            color:white;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<h1>Hospital Management System</h1>
+
+<form action="/add" method="post">
+
+    <input type="text" name="name" placeholder="Enter Name" required>
+
+    <input type="number" name="age" placeholder="Enter Age" required>
+
+    <input type="text" name="disease" placeholder="Enter Disease" required>
+
+    <input type="text" name="phone" placeholder="Enter Phone" required>
+
+    <button type="submit">Add Patient</button>
+
+</form>
+
+<table>
+
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Disease</th>
+        <th>Phone</th>
+    </tr>
+
+    <tr th:each="patient : ${patients}">
+
+        <td th:text="${patient.id}"></td>
+
+        <td th:text="${patient.name}"></td>
+
+        <td th:text="${patient.age}"></td>
+
+        <td th:text="${patient.disease}"></td>
+
+        <td th:text="${patient.phone}"></td>
+
+    </tr>
+
+</table>
+
+</body>
+</html>
