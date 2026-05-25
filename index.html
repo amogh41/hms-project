@@ -1,41 +1,159 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hospital Management System</title>
+
     <link rel="stylesheet" href="style.css">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
+
 <body>
 
     <div class="container">
+
         <h1>Hospital Management System</h1>
 
-        <input type="text" id="name" placeholder="Enter Name">
-        <input type="number" id="age" placeholder="Enter Age">
-        <input type="text" id="disease" placeholder="Enter Disease">
-        <input type="text" id="phone" placeholder="Enter Phone">
+        <div class="form-box">
 
-        <button onclick="addPatient()">Add Patient</button>
+            <input type="text" id="name" placeholder="Enter Name">
 
-        <h2>Patient Records</h2>
+            <input type="number" id="age" placeholder="Enter Age">
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Disease</th>
-                    <th>Phone</th>
-                </tr>
-            </thead>
+            <input type="text" id="disease" placeholder="Enter Disease">
 
-            <tbody id="patientTable">
-            </tbody>
-        </table>
+            <input type="text" id="phone" placeholder="Enter Phone">
+
+            <button onclick="addPatient()">Add Patient</button>
+
+        </div>
+
+        <div class="table-box">
+
+            <h2>Patient Records</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Disease</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+
+                <tbody id="patientTable">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
     </div>
 
-    <script src="script.js"></script>
+<script>
+
+const SUPABASE_URL = "https://ekqzqlamjalakueuozxv.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_Yso3unAMOzjoLNHVxqxmkw_SJ17c2qH";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+async function addPatient() {
+
+    const name = document.getElementById("name").value;
+
+    const age = document.getElementById("age").value;
+
+    const disease = document.getElementById("disease").value;
+
+    const phone = document.getElementById("phone").value;
+
+
+    if (!name || !age || !disease || !phone) {
+
+        alert("Please fill all fields");
+
+        return;
+    }
+
+
+    const { error } = await supabase
+        .from("patients")
+        .insert([
+            {
+                name: name,
+                age: age,
+                disease: disease,
+                phone: phone
+            }
+        ]);
+
+
+    if (error) {
+
+        console.log(error);
+
+        alert("Error saving patient");
+
+    } else {
+
+        alert("Patient Saved Successfully");
+
+        loadPatients();
+
+        document.getElementById("name").value = "";
+
+        document.getElementById("age").value = "";
+
+        document.getElementById("disease").value = "";
+
+        document.getElementById("phone").value = "";
+    }
+}
+
+
+async function loadPatients() {
+
+    const { data, error } = await supabase
+        .from("patients")
+        .select("*");
+
+
+    const table = document.getElementById("patientTable");
+
+    table.innerHTML = "";
+
+
+    data.forEach(patient => {
+
+        table.innerHTML += `
+
+            <tr>
+
+                <td>${patient.name}</td>
+
+                <td>${patient.age}</td>
+
+                <td>${patient.disease}</td>
+
+                <td>${patient.phone}</td>
+
+            </tr>
+
+        `;
+    });
+}
+
+
+loadPatients();
+
+</script>
 
 </body>
 </html>
