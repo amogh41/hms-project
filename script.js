@@ -1,51 +1,65 @@
-// script.js
+const SUPABASE_URL = "https://ekqzqlamjalakueuozxv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Yso3unAMOzjoLNHVxqxmkw_SJ17c2qH";
 
-let patients = [];
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-function addPatient() {
+async function addPatient() {
+    const name = document.getElementById("name").value;
+    const age = document.getElementById("age").value;
+    const disease = document.getElementById("disease").value;
+    const phone = document.getElementById("phone").value;
 
-    let name = document.getElementById("name").value;
-    let age = document.getElementById("age").value;
-    let disease = document.getElementById("disease").value;
-    let phone = document.getElementById("phone").value;
-
-    if(name == "" || age == "" || disease == "" || phone == "") {
+    if (!name || !age || !disease || !phone) {
         alert("Please fill all fields");
         return;
     }
 
-    let patient = {
-        name: name,
-        age: age,
-        disease: disease,
-        phone: phone
-    };
+    const { error } = await supabase
+        .from("patients")
+        .insert([
+            {
+                name: name,
+                age: age,
+                disease: disease,
+                phone: phone
+            }
+        ]);
 
-    patients.push(patient);
+    if (error) {
+        console.log(error);
+        alert("Error saving patient");
+    } else {
+        alert("Patient Saved Successfully");
+        loadPatients();
 
-    displayPatients();
-
-    document.getElementById("name").value = "";
-    document.getElementById("age").value = "";
-    document.getElementById("disease").value = "";
-    document.getElementById("phone").value = "";
+        document.getElementById("name").value = "";
+        document.getElementById("age").value = "";
+        document.getElementById("disease").value = "";
+        document.getElementById("phone").value = "";
+    }
 }
 
-function displayPatients() {
+async function loadPatients() {
 
-    let table = document.getElementById("patientTable");
+    const { data, error } = await supabase
+        .from("patients")
+        .select("*");
+
+    const table = document.getElementById("patientTable");
 
     table.innerHTML = "";
 
-    for(let i = 0; i < patients.length; i++) {
+    data.forEach(patient => {
 
         table.innerHTML += `
             <tr>
-                <td>${patients[i].name}</td>
-                <td>${patients[i].age}</td>
-                <td>${patients[i].disease}</td>
-                <td>${patients[i].phone}</td>
+                <td>${patient.name}</td>
+                <td>${patient.age}</td>
+                <td>${patient.disease}</td>
+                <td>${patient.phone}</td>
             </tr>
         `;
-    }
+    });
 }
+
+loadPatients();
